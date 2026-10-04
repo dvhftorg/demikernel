@@ -47,6 +47,11 @@ impl TcpConfig {
             options.rx_checksum_offload = value;
             options.tx_checksum_offload = value;
         }
+        // The default (TCP_ACK_DELAY_TIMEOUT, 500 ms) is the RFC 1122 maximum: a peer whose RTO is ~200 ms
+        // retransmits a lone segment before it gets ACKed, and shrinks its congestion window.
+        if let Ok(value) = config.tcp_ack_delay_timeout() {
+            options.ack_delay_timeout = value;
+        }
 
         Ok(options)
     }

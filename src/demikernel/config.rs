@@ -49,6 +49,7 @@ mod inetstack_config {
     pub const TCP_SEG_OFFLOAD: &str = "tcp_seg_offload";
     pub const GATEWAY_IPV4_ADDR: &str = "gateway_ipv4_addr";
     pub const LOCAL_NETMASK: &str = "local_netmask";
+    pub const ACK_DELAY_TIMEOUT_US: &str = "ack_delay_timeout_us";
 }
 
 // DPDK options. These only apply to catnip.
@@ -561,6 +562,12 @@ impl Config {
 
     pub fn mss(&self) -> Result<usize, Fail> {
         self.int_env_or_option(inetstack_config::MSS, Self::inetstack_config)
+    }
+
+    /// Delayed ACK timeout of TCP, in microseconds (`inetstack_config.ack_delay_timeout_us`).
+    pub fn tcp_ack_delay_timeout(&self) -> Result<Duration, Fail> {
+        let us: u64 = self.int_env_or_option(inetstack_config::ACK_DELAY_TIMEOUT_US, Self::inetstack_config)?;
+        Ok(Duration::from_micros(us))
     }
 
     pub fn tcp_checksum_offload(&self) -> Result<bool, Fail> {
